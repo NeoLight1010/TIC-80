@@ -126,7 +126,6 @@ struct Net
 {
     const char* host;
     CURLM* multi;
-    struct Curl_easy* sync;
 };
 
 static size_t writeCallbackSync(void *contents, size_t size, size_t nmemb, void *userp)
@@ -232,47 +231,6 @@ void netGet(Net* net, const char* path, HttpGetCallback callback, void* calldata
 #endif
 }
 
-void* netGetSync(Net* net, const char* path, s32* size)
-{
-#ifdef DISABLE_NETWORKING
-
-    return NULL;
-
-#else
-    #if defined(__EMSCRIPTEN__)
-
-    return NULL;
-
-    #else
-
-    CurlData data = {NULL, 0};
-
-    if(net->sync)
-    {
-        char url[URL_SIZE];
-        strcpy(url, net->host);
-        strcat(url, path);
-
-        curl_easy_setopt(net->sync, CURLOPT_URL, url);
-        curl_easy_setopt(net->sync, CURLOPT_WRITEDATA, &data);
-
-        if(curl_easy_perform(net->sync) == CURLE_OK)
-        {
-            long httpCode = 0;
-            curl_easy_getinfo(net->sync, CURLINFO_RESPONSE_CODE, &httpCode);
-            if(httpCode != 200) return NULL;
-        }
-        else return NULL;
-    }
-
-    *size = data.size;
-
-    return data.buffer;
-
-    #endif
-#endif
-}
-
 void netTick(Net *net)
 {
 #if !defined(__EMSCRIPTEN__)
@@ -357,12 +315,9 @@ Net* createNet(const char* host)
     {
         *net = (Net)
         {
-            .sync = curl_easy_init(),
             .multi = curl_multi_init(),
             .host = host,
         };
-
-        curl_easy_setopt(net->sync, CURLOPT_WRITEFUNCTION, writeCallbackSync);
     }
 
     #endif
@@ -373,8 +328,6 @@ Net* createNet(const char* host)
 void closeNet(Net* net)
 {
     #if !defined(__EMSCRIPTEN__)
-    if(net->sync)
-        curl_easy_cleanup(net->sync);
 
     if(net->multi)
         curl_multi_cleanup(net->multi);

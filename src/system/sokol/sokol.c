@@ -88,11 +88,6 @@ static u64 getPerformanceFrequency()
     return 1000000000;
 }
 
-static void* httpGetSync(const char* url, s32* size)
-{
-    return netGetSync(platform.net, url, size);
-}
-
 static void httpGet(const char* url, HttpGetCallback callback, void* calldata)
 {
     return netGet(platform.net, url, callback, calldata);
@@ -151,7 +146,6 @@ static System systemInterface =
     .getPerformanceCounter = getPerformanceCounter,
     .getPerformanceFrequency = getPerformanceFrequency,
 
-    .httpGetSync = httpGetSync,
     .httpGet = httpGet,
 
     .goFullscreen = goFullscreen,

@@ -114,11 +114,6 @@ static u64 getPerformanceFrequency()
 	return HZ;
 }
 
-static void* httpGetSync(const char* url, s32* size)
-{
-	return NULL;
-}
-
 static void httpGet(const char* url, HttpGetCallback callback, void* calldata)
 {
 	
@@ -173,11 +168,7 @@ static System systemInterface =
 	.getPerformanceCounter = getPerformanceCounter,
 	.getPerformanceFrequency = getPerformanceFrequency,
 
-	.httpGetSync = httpGetSync,
 	.httpGet = httpGet,
-
-	//.fileDialogLoad = NULL, //file_dialog_load,
-	//.fileDialogSave = NULL, //file_dialog_save,
 
 	.goFullscreen = agoFullscreen,
 	.showMessageBox = showMessageBox,

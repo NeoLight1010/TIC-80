@@ -211,17 +211,3 @@ void n3ds_net_get(tic_n3ds_net *net, const char *url, HttpGetCallback callback, 
 	svcGetThreadPriority(&priority, CUR_THREAD_HANDLE);
 	threadCreate((ThreadFunc) n3ds_net_get_thread, ctx, 16 * 1024, priority - 1, -1, true);
 }
-
-void* n3ds_net_get_sync(tic_n3ds_net *net, const char *url, s32 *size) {
-	net_ctx ctx;
-	memset(&ctx, 0, sizeof(net_ctx));
-
-	n3ds_net_apply_url(&ctx, url);
-	ctx.net = net;
-	n3ds_net_execute(&ctx, true);
-
-	if (size != NULL) {
-		*size = ctx.size;
-	}
-	return ctx.buffer;
-}

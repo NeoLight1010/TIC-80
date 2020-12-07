@@ -1329,11 +1329,6 @@ static void openSystemPath(const char* path) {}
 
 #endif
 
-static void* httpGetSync(const char* url, s32* size)
-{
-    return netGetSync(platform.net, url, size);
-}
-
 static void httpGet(const char* url, HttpGetCallback callback, void* calldata)
 {
     netGet(platform.net, url, callback, calldata);
@@ -1414,7 +1409,6 @@ static System systemInterface =
     .getPerformanceCounter = getPerformanceCounter,
     .getPerformanceFrequency = getPerformanceFrequency,
 
-    .httpGetSync = httpGetSync,
     .httpGet = httpGet,
 
     .goFullscreen = goFullscreen,

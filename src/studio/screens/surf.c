@@ -398,29 +398,29 @@ static void resetMenu(Surf* surf)
     surf->menu.anim = 0;
 }
 
-static void* requestCover(Surf* surf, const char* hash, s32* size)
-{
-    char cachePath[TICNAME_MAX] = {0};
-    sprintf(cachePath, TIC_CACHE "%s.gif", hash);
+// static void* requestCover(Surf* surf, const char* hash, s32* size)
+// {
+//     char cachePath[TICNAME_MAX] = {0};
+//     sprintf(cachePath, TIC_CACHE "%s.gif", hash);
 
-    {
-        void* data = fsLoadRootFile(surf->fs, cachePath, size);
+//     {
+//         void* data = fsLoadRootFile(surf->fs, cachePath, size);
 
-        if(data)
-            return data;
-    }
+//         if(data)
+//             return data;
+//     }
 
-    char path[TICNAME_MAX] = {0};
-    sprintf(path, "/cart/%s/cover.gif", hash);
-    void* data = getSystem()->httpGetSync(path, size);
+//     char path[TICNAME_MAX] = {0};
+//     sprintf(path, "/cart/%s/cover.gif", hash);
+//     void* data = getSystem()->httpGetSync(path, size);
 
-    if(data)
-    {
-        fsSaveRootFile(surf->fs, cachePath, data, *size, false);
-    }
+//     if(data)
+//     {
+//         fsSaveRootFile(surf->fs, cachePath, data, *size, false);
+//     }
 
-    return data;
-}
+//     return data;
+// }
 
 static void updateMenuItemCover(Surf* surf, const u8* cover, s32 size)
 {
@@ -525,18 +525,18 @@ static void loadCover(Surf* surf)
             free(data);
         }
     }
-    else if(item->hash && !item->cover)
-    {
-        s32 size = 0;
+    // else if(item->hash && !item->cover)
+    // {
+    //     s32 size = 0;
 
-        u8* cover = requestCover(surf, item->hash, &size);
+    //     u8* cover = requestCover(surf, item->hash, &size);
 
-        if(cover)
-        {
-            updateMenuItemCover(surf, cover, size);
-            free(cover);
-        }       
-    }
+    //     if(cover)
+    //     {
+    //         updateMenuItemCover(surf, cover, size);
+    //         free(cover);
+    //     }       
+    // }
 }
 
 static void initMenu(Surf* surf)

@@ -192,15 +192,6 @@ static u64 getPerformanceFrequency()
     return SYSCLOCK_ARM11;
 }
 
-static void* httpGetSync(const char* url, s32* size)
-{
-#ifdef ENABLE_HTTPC
-    return n3ds_net_get_sync(&platform.httpc, url, size);
-#else
-    return NULL;
-#endif
-}
-
 static void httpGet(const char* url, HttpGetCallback callback, void* calldata)
 {
 #ifdef ENABLE_HTTPC
@@ -499,7 +490,6 @@ static System systemInterface =
     .getPerformanceCounter = getPerformanceCounter,
     .getPerformanceFrequency = getPerformanceFrequency,
 
-    .httpGetSync = httpGetSync,
     .httpGet = httpGet,
 
     .goFullscreen = goFullscreen,

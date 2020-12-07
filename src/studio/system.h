@@ -63,7 +63,6 @@ typedef struct
     u64     (*getPerformanceCounter)();
     u64     (*getPerformanceFrequency)();
 
-    void*   (*httpGetSync)(const char* url, s32* size);
     void    (*httpGet)(const char* url, HttpGetCallback callback, void* userdata);
 
     void    (*goFullscreen)();
