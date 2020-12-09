@@ -260,7 +260,7 @@ static void onConnect(uv_connect_t *req, s32 status)
     Net* net = req->data;
 
     char httpReq[1024];
-    sprintf_s(httpReq, sizeof httpReq, "GET %s HTTP/1.1\nHost: %s\n\n", net->path, net->host);
+    snprintf(httpReq, sizeof httpReq, "GET %s HTTP/1.1\nHost: %s\n\n", net->path, net->host);
 
     uv_buf_t http = uv_buf_init(httpReq, strlen(httpReq));
 

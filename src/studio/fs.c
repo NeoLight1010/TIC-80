@@ -23,6 +23,8 @@
 #include "system.h"
 #include "fs.h"
 
+#include <stdlib.h>
+
 #if defined(BAREMETALPI) || defined(_3DS)
   #ifdef EN_DEBUG
     #define dbg(...) printf(__VA_ARGS__)
