@@ -46,7 +46,7 @@
 
 #define TEXTURE_SIZE (TIC80_FULLWIDTH)
 
-#if defined(__TIC_WINRT__) || defined(__TIC_WINDOWS__)
+#if defined(__TIC_WINDOWS__)
 #include <windows.h>
 #endif
 
@@ -1598,7 +1598,7 @@ static s32 start(s32 argc, const char **argv, const char* folder)
 
     initSound();
 
-    platform.net = createNet(TIC_WEBSITE);
+    platform.net = createNet(TIC_HOST);
 
     platform.studio = studioInit(argc, argv, platform.audio.spec.freq, folder, &systemInterface);
 
@@ -1630,6 +1630,7 @@ static s32 start(s32 argc, const char **argv, const char* folder)
 #if defined(__EMSCRIPTEN__)
     emscripten_set_main_loop(emsGpuTick, 0, 1);
 #else
+
     {
         u64 nextTick = SDL_GetPerformanceCounter();
         const u64 Delta = SDL_GetPerformanceFrequency() / TIC80_FRAMERATE;

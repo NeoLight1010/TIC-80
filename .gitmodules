@@ -1,9 +1,6 @@
 [submodule "vendor/blip-buf"]
 	path = vendor/blip-buf
 	url = https://github.com/nesbox/blip-buf.git
-[submodule "vendor/curl"]
-	path = vendor/curl
-	url = https://github.com/nesbox/curl.git
 [submodule "vendor/dirent"]
 	path = vendor/dirent
 	url = https://github.com/tronkko/dirent.git
@@ -49,3 +46,9 @@
 [submodule "vendor/circle-stdlib"]
 	path = vendor/circle-stdlib
 	url = https://github.com/smuehlst/circle-stdlib.git
+[submodule "vendor/http-parser"]
+	path = vendor/http-parser
+	url = https://github.com/nodejs/http-parser.git
+[submodule "vendor/libuv"]
+	path = vendor/libuv
+	url = https://github.com/libuv/libuv.git

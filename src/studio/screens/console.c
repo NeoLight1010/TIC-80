@@ -716,7 +716,7 @@ static void onConsoleLoadCommandConfirmed(Console* console, const char* param)
 
         if(data)
         {
-            console->showGameMenu = fsIsInPublicDir(console->fs);
+            // console->showGameMenu = fsIsInPublicDir(console->fs);
 
             loadRom(console->tic, data, size);
 
@@ -755,30 +755,6 @@ static void onConsoleLoadCommandConfirmed(Console* console, const char* param)
     else printBack(console, "\ncart name is missing");
 
     commandDone(console);
-}
-
-static void load(Console* console, const char* path, const char* hash)
-{
-    if(hash)
-    {
-        s32 size = 0;
-        const char* name = getCartName(path);
-
-        void* data = fsLoadFileByHash(console->fs, hash, &size);
-
-        if(data)
-        {
-            console->showGameMenu = true;
-
-            loadRom(console->tic, data, size);
-            onCartLoaded(console, name);
-
-            free(data);     
-        }
-
-        commandDone(console);
-    }
-    else onConsoleLoadCommandConfirmed(console, path);
 }
 
 typedef void(*ConfirmCallback)(Console* console, const char* param);
@@ -975,35 +951,6 @@ static void onConsoleNewCommand(Console* console, const char* param)
     }
 }
 
-typedef struct
-{
-    s32 count;
-    Console* console;
-} PrintFileNameData;
-
-static bool printFilename(const char* name, const char* info, s32 id, void* data, bool dir)
-{
-
-    PrintFileNameData* printData = data;
-    Console* console = printData->console;
-
-    printLine(console);
-
-    if(dir)
-    {
-
-        printBack(console, "[");
-        printBack(console, name);
-        printBack(console, "]");
-    }
-    else printFront(console, name);
-
-    if(!dir)
-        printData->count++;
-
-    return true;
-}
-
 static void onConsoleChangeDirectory(Console* console, const char* param)
 {
     if(param && strlen(param))
@@ -1036,32 +983,64 @@ static void onConsoleMakeDirectory(Console* console, const char* param)
     commandDone(console);
 }
 
-static void onConsoleDirCommand(Console* console, const char* param)
+typedef struct
 {
-    PrintFileNameData data = {0, console};
+    s32 count;
+    Console* console;
+} PrintFileNameData;
 
-    printLine(console);
+static bool printFilename(const char* name, const char* info, s32 id, void* calldata, bool dir)
+{
+    PrintFileNameData* data = calldata;
+    Console* console = data->console;
 
-    fsEnumFiles(console->fs, printFilename, &data);
-
-    if(data.count == 0)
+    if (name)
     {
-        printBack(console, "\n\nuse ");
-        printFront(console, "DEMO");
-        printBack(console, " command to install demo carts");
+        printLine(console);
+
+        if(dir)
+        {
+
+            printBack(console, "[");
+            printBack(console, name);
+            printBack(console, "]");
+        }
+        else printFront(console, name);
+
+        if(!dir)
+            data->count++;
+    }
+    else
+    {
+        if(data->count == 0)
+        {
+            printBack(console, "\n\nuse ");
+            printFront(console, "DEMO");
+            printBack(console, " command to install demo carts");
+        }
+
+        printLine(console);
+        commandDone(console);
     }
 
+    return true;
+}
+
+static void onConsoleDirCommand(Console* console, const char* param)
+{
     printLine(console);
-    commandDone(console);
+
+    PrintFileNameData data = {0, console};
+    fsEnumFiles(console->fs, printFilename, OBJCOPY(data));
 }
 
 static void onConsoleFolderCommand(Console* console, const char* param)
 {
-
+    const char* path = fsGetFilePath(console->fs, "");
     printBack(console, "\nStorage path:\n");
-    printFront(console, fsGetRootFilePath(console->fs, ""));
+    printFront(console, path);
 
-    fsOpenWorkingFolder(console->fs);
+    getSystem()->openSystemPath(path);
 
     commandDone(console);
 }
@@ -2306,7 +2285,7 @@ static bool predictFilename(const char* name, const char* info, s32 id, void* da
 {
     char* buffer = (char*)data;
 
-    if(strstr(name, buffer) == name)
+    if(name && strstr(name, buffer) == name)
     {
         strcpy(buffer, name);
         return false;
@@ -2325,6 +2304,7 @@ static void processConsoleTab(Console* console)
 
         if(param && strlen(++param))
         {
+            // !TODO: fix prediction for public files
             fsEnumFiles(console->fs, predictFilename, param);
             console->inputPosition = strlen(input);
         }
@@ -2775,7 +2755,6 @@ static void processKeyboard(Console* console)
 
         console->cursor.delay = CONSOLE_CURSOR_DELAY;
     }
-
 }
 
 static void tick(Console* console)
@@ -2862,8 +2841,7 @@ static bool cmdLoadCart(Console* console, const char* path)
 
     if(data)
     {
-        char cartName[TICNAME_MAX];
-        fsFilename(path, cartName);
+        const char* cartName = path;
         setCartName(console, cartName, path);
 
         if(hasProjectExt(cartName))
@@ -2894,7 +2872,7 @@ void initConsole(Console* console, tic_mem* tic, FileSystem* fs, Config* config,
     {
         .tic = tic,
         .config = config,
-        .load = load,
+        .load = onConsoleLoadCommand,
         .updateProject = updateProject,
         .error = error,
         .trace = trace,

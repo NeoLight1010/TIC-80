@@ -296,21 +296,6 @@ static void drawMenu(Surf* surf, s32 x, s32 y)
     }
 }
 
-static void replace(char* src, const char* what, const char* with)
-{
-    while(true)
-    {
-        char* pos = strstr(src, what);
-
-        if(pos)
-        {
-            strcpy(pos, pos + strlen(what) - strlen(with));
-            memcpy(pos, with, strlen(with));
-        }
-        else break;     
-    }
-}
-
 static void cutExt(char* name, const char* ext)
 {
     name[strlen(name)-strlen(ext)] = '\0';
@@ -340,7 +325,6 @@ static bool addMenuItem(const char* name, const char* info, s32 id, void* ptr, b
         }
         else
         {
-
             item->label = strdup(name);
 
             if(tic_tool_has_ext(name, CartExt))
@@ -349,10 +333,6 @@ static bool addMenuItem(const char* name, const char* info, s32 id, void* ptr, b
             {
                 project = true;
             }
-
-
-            replace(item->label, "&amp;", "&");
-            replace(item->label, "&#39;", "'");
         }
 
         item->hash = info ? strdup(info) : NULL;
@@ -498,7 +478,7 @@ static void loadCover(Surf* surf)
     }
     item->coverLoaded = true;
 
-    if(!fsIsInPublicDir(surf->fs))
+    // if(!fsIsInPublicDir(surf->fs))
     {
 
         s32 size = 0;
@@ -626,7 +606,7 @@ static void onPlayCart(Surf* surf)
 {
     MenuItem* item = &surf->menu.items[surf->menu.pos];
 
-    surf->console->load(surf->console, item->name, item->hash);
+    surf->console->load(surf->console, item->name);//, item->hash);
 
     runGameFromSurf();
 }

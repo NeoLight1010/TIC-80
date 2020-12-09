@@ -682,35 +682,17 @@ if(MINGW)
 endif()
 
 ################################
-# CURL
+# libuv
 ################################
 
-if (NOT N3DS AND NOT EMSCRIPTEN AND NOT BAREMETALPI)
+add_subdirectory(${THIRDPARTY_DIR}/libuv)
 
-    set(BUILD_SHARED_LIBS OFF CACHE BOOL "")
+################################
+# HTTP parser
+################################
 
-    if(WIN32)
-        set(CURL_STATIC_CRT ON CACHE BOOL "")
-    endif()
-
-    set(CMAKE_USE_OPENSSL OFF CACHE BOOL "" )
-    set(CMAKE_USE_LIBSSH2 OFF CACHE BOOL "")
-    set(HTTP_ONLY ON CACHE BOOL "")
-    set(BUILD_CURL_EXE OFF CACHE BOOL "")
-    set(CURL_CA_BUNDLE "none" CACHE STRING "")
-    set(CURL_CA_PATH "none" CACHE STRING "")
-
-    if(RPI)
-        set(CURL_ZLIB OFF CACHE BOOL "" )
-    endif()
-
-    add_subdirectory(${THIRDPARTY_DIR}/curl)
-
-    if(RPI)
-        target_compile_definitions(libcurl PRIVATE NOT_USE_FILE_OFFSET64)
-    endif()
-
-endif()
+add_library(http_parser STATIC ${THIRDPARTY_DIR}/http-parser/http_parser.c)
+target_include_directories(http_parser INTERFACE ${THIRDPARTY_DIR}/http-parser)
 
 ################################
 # Network library
@@ -723,7 +705,7 @@ if (NOT N3DS)
         INTERFACE ${CMAKE_SOURCE_DIR}/src/system)
 
     if(NOT EMSCRIPTEN)
-        target_link_libraries(net libcurl)
+        target_link_libraries(net uv_a http_parser)
     endif()
 endif()
 

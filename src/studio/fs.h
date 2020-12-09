@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include <tic80_types.h>
+#include "tic80_types.h"
 #include <string.h>
 
 typedef bool(*ListCallback)(const char* name, const char* info, s32 id, void* data, bool dir);
@@ -31,29 +31,28 @@ typedef struct FileSystem FileSystem;
 
 FileSystem* createFileSystem(const char* path);
 
-void fsEnumFiles(FileSystem* fs, ListCallback callback, void* data);
-bool fsDeleteFile(FileSystem* fs, const char* name);
-bool fsDeleteDir(FileSystem* fs, const char* name);
-bool fsSaveFile(FileSystem* fs, const char* name, const void* data, s32 size, bool overwrite);
-bool fsSaveRootFile(FileSystem* fs, const char* name, const void* data, s32 size, bool overwrite);
-void* fsLoadFile(FileSystem* fs, const char* name, s32* size);
-void* fsLoadFileByHash(FileSystem* fs, const char* hash, s32* size);
-void* fsLoadRootFile(FileSystem* fs, const char* name, s32* size);
 const char* fsGetFilePath(FileSystem* fs, const char* name);
-const char* fsGetRootFilePath(FileSystem* fs, const char* name);
-void fsMakeDir(FileSystem* fs, const char* name);
-bool fsExistsFile(FileSystem* fs, const char* name);
 
-u64 fsMDate(const char* name);
-void fsBasename(const char *path, char* out);
-void fsFilename(const char *path, char* out);
-bool fsExists(const char* name);
-void* fsReadFile(const char* path, s32* size);
-bool fsWriteFile(const char* path, const void* data, s32 size);
-void fsOpenWorkingFolder(FileSystem* fs);
-bool fsIsDir(FileSystem* fs, const char* dir);
-bool fsIsInPublicDir(FileSystem* fs);
-bool fsChangeDir(FileSystem* fs, const char* dir);
-void fsGetDir(FileSystem* fs, char* out);
-void fsDirBack(FileSystem* fs);
-void fsHomeDir(FileSystem* fs);
+// sync operations
+bool 	fsExistsFile(FileSystem* fs, const char* name);
+bool 	fsIsDir(FileSystem* fs, const char* dir);
+void 	fsGetDir(FileSystem* fs, char* out);
+
+bool 	fsSaveRootFile(FileSystem* fs, const char* name, const void* data, s32 size, bool overwrite);
+void* 	fsLoadRootFile(FileSystem* fs, const char* name, s32* size);
+
+// async operations
+void 	fsEnumFiles(FileSystem* fs, ListCallback callback, void* data);
+bool 	fsDeleteFile(FileSystem* fs, const char* name);
+bool 	fsDeleteDir(FileSystem* fs, const char* name);
+bool 	fsSaveFile(FileSystem* fs, const char* name, const void* data, s32 size, bool overwrite);
+void* 	fsLoadFile(FileSystem* fs, const char* name, s32* size);
+void 	fsMakeDir(FileSystem* fs, const char* name);
+bool 	fsChangeDir(FileSystem* fs, const char* dir);
+void 	fsDirBack(FileSystem* fs);
+void 	fsHomeDir(FileSystem* fs);
+
+u64 	fsMDate(const char* name);
+bool 	fsExists(const char* name);
+void* 	fsReadFile(const char* path, s32* size);
+bool 	fsWriteFile(const char* path, const void* data, s32 size);
