@@ -27,8 +27,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define URL_SIZE 2048
-
 #if defined(__EMSCRIPTEN__)
 
 #include <emscripten/fetch.h>
@@ -198,14 +196,6 @@ static s32 onStatus(http_parser* parser, const char* at, size_t length)
     return parser->status_code != HTTP_STATUS_OK;
 }
 
-static http_parser_settings ParserSettings = 
-{
-    .on_status = onStatus,
-    .on_body = onBody,
-    .on_message_complete = onMessageComplete,
-    .on_headers_complete = onHeadersComplete,
-};
-
 static void onError(Net* net, s32 code)
 {
     net->callback(&(HttpGetData)
@@ -232,6 +222,14 @@ static void onResponse(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf)
 
     if(nread > 0)
     {
+        static const http_parser_settings ParserSettings = 
+        {
+            .on_status = onStatus,
+            .on_body = onBody,
+            .on_message_complete = onMessageComplete,
+            .on_headers_complete = onHeadersComplete,
+        };
+
         s32 parsed = http_parser_execute(&net->parser, &ParserSettings, buf->base, nread);
 
         if(parsed != nread)
@@ -259,7 +257,7 @@ static void onConnect(uv_connect_t *req, s32 status)
 {
     Net* net = req->data;
 
-    char httpReq[1024];
+    char httpReq[2048];
     snprintf(httpReq, sizeof httpReq, "GET %s HTTP/1.1\nHost: %s\n\n", net->path, net->host);
 
     uv_buf_t http = uv_buf_init(httpReq, strlen(httpReq));

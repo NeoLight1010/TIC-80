@@ -418,7 +418,7 @@ sapp_desc sokol_main(s32 argc, char* argv[])
     platform.audio.desc.num_channels = TIC_STEREO_CHANNELS;
     saudio_setup(&platform.audio.desc);
 
-    platform.net = createNet(TIC_WEBSITE);
+    platform.net = createNet(TIC_HOST);
 
     platform.studio = studioInit(argc, (const char**)argv, saudio_sample_rate(), "./", &systemInterface);
 

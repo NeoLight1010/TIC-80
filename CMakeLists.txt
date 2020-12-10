@@ -682,19 +682,6 @@ if(MINGW)
 endif()
 
 ################################
-# libuv
-################################
-
-add_subdirectory(${THIRDPARTY_DIR}/libuv)
-
-################################
-# HTTP parser
-################################
-
-add_library(http_parser STATIC ${THIRDPARTY_DIR}/http-parser/http_parser.c)
-target_include_directories(http_parser INTERFACE ${THIRDPARTY_DIR}/http-parser)
-
-################################
 # Network library
 ################################
 
@@ -705,6 +692,17 @@ if (NOT N3DS)
         INTERFACE ${CMAKE_SOURCE_DIR}/src/system)
 
     if(NOT EMSCRIPTEN)
+        ################################
+        # libuv
+        ################################
+        add_subdirectory(${THIRDPARTY_DIR}/libuv)
+
+        ################################
+        # HTTP parser
+        ################################
+        add_library(http_parser STATIC ${THIRDPARTY_DIR}/http-parser/http_parser.c)
+        target_include_directories(http_parser INTERFACE ${THIRDPARTY_DIR}/http-parser)
+
         target_link_libraries(net uv_a http_parser)
     endif()
 endif()

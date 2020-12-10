@@ -1641,7 +1641,7 @@ static void onExportGet(const HttpGetData* data)
         break;
     case HttpGetError:
         free(exportData);
-        printError(console, "file downloading error :(");
+        printError(console, "\nfile downloading error :(");
         commandDone(console);
         break;
     default:
