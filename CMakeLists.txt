@@ -336,6 +336,7 @@ if(BUILD_SDL AND BUILD_PLAYER AND NOT RPI)
 
     if(MINGW)
         target_link_libraries(player-sdl mingw32)
+        target_link_options(player-sdl PRIVATE -static)
     endif()
 
     target_link_libraries(player-sdl tic80core SDL2-static SDL2main)
@@ -399,6 +400,7 @@ if(BUILD_PLAYER AND BUILD_SOKOL)
 
     if(MINGW)
         target_link_libraries(player-sokol mingw32)
+        target_link_options(player-sokol PRIVATE -static)
     endif()
 
     target_include_directories(player-sokol PRIVATE 
@@ -677,10 +679,6 @@ endif()
 
 endif()
 
-if(MINGW)
-    set(CMAKE_EXE_LINKER_FLAGS "-static")
-endif()
-
 ################################
 # Network library
 ################################
@@ -720,12 +718,6 @@ if(BUILD_SDL)
         configure_file("${PROJECT_SOURCE_DIR}/build/windows/tic80.rc.in" "${PROJECT_SOURCE_DIR}/build/windows/tic80.rc")
         set(TIC80_SRC ${TIC80_SRC} "${PROJECT_SOURCE_DIR}/build/windows/tic80.rc")
 
-        # Debug build is a console app.
-        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        else()
-            set(SYSTEM_TYPE WIN32)
-        endif()
-
         add_executable(tic80 ${SYSTEM_TYPE} ${TIC80_SRC})
 
     elseif(ANDROID)
@@ -742,6 +734,7 @@ if(BUILD_SDL)
 
     if(MINGW)
         target_link_libraries(tic80 mingw32)
+        target_link_options(tic80 PRIVATE -static -mconsole)
     endif()
 
     if(EMSCRIPTEN)
@@ -819,6 +812,7 @@ if(BUILD_SOKOL)
 
     if(MINGW)
         target_link_libraries(tic80-sokol mingw32)
+        target_link_options(tic80-sokol PRIVATE -static -mconsole)
     endif()
 
     target_link_libraries(tic80-sokol tic80studio sokol net)
